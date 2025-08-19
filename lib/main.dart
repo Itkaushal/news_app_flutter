@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:news_flutter_apk/providers/news_provider.dart';
+import 'package:news_flutter_apk/screens/hindinews_homescreen.dart';
 import 'package:news_flutter_apk/screens/home_screen.dart';
 import 'package:news_flutter_apk/screens/notification_screen.dart';
 import 'package:news_flutter_apk/screens/profile_screen.dart';
 import 'package:news_flutter_apk/screens/read_artical_screen.dart';
 import 'package:news_flutter_apk/screens/search_screen.dart';
+import 'package:news_flutter_apk/screens/splash_screen.dart';
+import 'package:news_flutter_apk/services/notification_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.init(); // notification init
+  await requestNotificationPermission(); // 👈 important
   runApp(
     const MyApp()
   );
@@ -27,7 +35,7 @@ class MyApp extends StatelessWidget {
           themeMode: ThemeMode.system,
           theme: ThemeData.light(useMaterial3: true),
           darkTheme: ThemeData.dark(useMaterial3: true),
-          home: MainScreen(),
+          home: SplashScreen(),
 
       ),
     );
@@ -60,7 +68,7 @@ class MainScreen extends StatelessWidget{
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   IconButton(icon: const Icon(Icons.home,color: Colors.red,), onPressed: () {
-                    //Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                    //Navigator.push(context, MaterialPageRoute(builder: (_) => MainScreen()));
                   }),
                   IconButton(icon: const Icon(Icons.search,color: Colors.red,), onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => SearchScreen()));
@@ -94,7 +102,7 @@ class MainScreen extends StatelessWidget{
             child: Center(
               child: const Icon(
                 Icons.chrome_reader_mode_outlined,
-                color: Colors.black54,size: 30,
+                color: Colors.redAccent,size: 30,
                 weight: 10,
               ),
             ),
@@ -104,4 +112,12 @@ class MainScreen extends StatelessWidget{
       );
   }
 
+}
+
+
+
+Future<void> requestNotificationPermission() async {
+  if (await Permission.notification.isDenied) {
+    await Permission.notification.request();
+  }
 }

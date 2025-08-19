@@ -1,23 +1,22 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/news_provider.dart';
 import '../widgets/article_tile.dart';
 
-class ReadArticalScreen extends StatefulWidget {
-  const ReadArticalScreen({super.key});
+class HindinewsHomescreen extends StatefulWidget {
+  const HindinewsHomescreen({super.key});
 
   @override
-  State<ReadArticalScreen> createState() => _ReadArticalScreenState();
+  State<HindinewsHomescreen> createState() => _HindinewsHomeScreenState();
 }
 
-class _ReadArticalScreenState extends State<ReadArticalScreen> {
+class _HindinewsHomeScreenState extends State<HindinewsHomescreen> {
   @override
   void initState() {
     super.initState();
     // Fetch default news (general or whatever your provider defaults to)
-    Provider.of<NewsProvider>(context, listen: false).searchHindiNews(query: "हिंदी");
+    Provider.of<NewsProvider>(context, listen: false).fetchNews();
   }
 
   @override
@@ -27,7 +26,7 @@ class _ReadArticalScreenState extends State<ReadArticalScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "🌐 हिंदी ताजा खबरें 🗞️",
+          "Flutter News App",
           style: TextStyle(
             color: Colors.black,
             fontSize: 25,
