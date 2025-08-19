@@ -12,7 +12,6 @@ class ArticleTile extends StatelessWidget {
     return Card(
       elevation: 2,
       shadowColor: Colors.black,
-      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       margin: const EdgeInsets.all(5),
       child: ListTile(

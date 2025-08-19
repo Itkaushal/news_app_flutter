@@ -19,7 +19,11 @@ class _SearchScreenState extends State<SearchScreen> {
     final provider = Provider.of<NewsProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Search News")),
+      appBar: AppBar(
+        title: const Text("Search News"),
+        backgroundColor: Colors.red
+      ),
+
       body: Column(
         children: [
           Padding(
@@ -39,7 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           Expanded(
             child: provider.isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator(color: Colors.redAccent,backgroundColor: Colors.black38,))
                 : ListView.builder(
               itemCount: provider.articles.length,
               itemBuilder: (context, index) {

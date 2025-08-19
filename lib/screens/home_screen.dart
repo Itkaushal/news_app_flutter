@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:news_flutter_apk/screens/search_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/news_provider.dart';
@@ -28,18 +27,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Flutter News",style: TextStyle(color: Colors.black,fontSize: 27,fontWeight: FontWeight.w400,letterSpacing: 2),),
+        title: const Text("Flutter News App",
+          style: TextStyle(color: Colors.black,
+              fontSize: 25,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 2),
+        ),
         backgroundColor: Colors.red,
         centerTitle: true,
         elevation: 7,
         shadowColor: Colors.black,
         actions: [
-          IconButton(
+          /*IconButton(
             icon: const Icon(Icons.search,color: Colors.black),
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen()));
             },
-          ),
+          ),*/
+
         ],
       ),
       body: Column(
