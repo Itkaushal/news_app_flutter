@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:news_flutter_apk/providers/news_provider.dart';
-import 'package:news_flutter_apk/screens/hindinews_homescreen.dart';
 import 'package:news_flutter_apk/screens/home_screen.dart';
 import 'package:news_flutter_apk/screens/notification_screen.dart';
 import 'package:news_flutter_apk/screens/profile_screen.dart';

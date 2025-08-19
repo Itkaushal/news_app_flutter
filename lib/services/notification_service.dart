@@ -1,4 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import '../models/notification_model.dart';
+import '../storage/notification_storage.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
@@ -6,7 +11,7 @@ class NotificationService {
 
   static Future<void> init() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@drawable/news_app_icon');
 
     const InitializationSettings initializationSettings =
     InitializationSettings(
@@ -20,7 +25,7 @@ class NotificationService {
     required String title,
     required String body,
   }) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
       'news_channel', // id
       'News Notifications', // name
@@ -30,7 +35,7 @@ class NotificationService {
       showWhen: true,
     );
 
-    const NotificationDetails platformChannelSpecifics =
+    final NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
 
     await _notificationsPlugin.show(
@@ -40,6 +45,11 @@ class NotificationService {
       platformChannelSpecifics,
       payload: 'news_payload',
     );
+
+    // ✅ Store in local storage
+    await NotificationStorage.saveNotification(AppNotification(title: title, body: body, timestamp: DateTime.now().toString()));
+
   }
+
 }
 
