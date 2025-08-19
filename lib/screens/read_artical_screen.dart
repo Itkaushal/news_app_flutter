@@ -16,8 +16,9 @@ class _ReadArticalScreenState extends State<ReadArticalScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch default news (general or whatever your provider defaults to)
-    Provider.of<NewsProvider>(context, listen: false).searchHindiNews(query: "हिंदी");
+    // Fetch default Hindi news
+    Provider.of<NewsProvider>(context, listen: false)
+        .searchHindiNews(query: "हिंदी");
   }
 
   @override
@@ -25,20 +26,21 @@ class _ReadArticalScreenState extends State<ReadArticalScreen> {
     final newsProvider = Provider.of<NewsProvider>(context);
 
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text(
           "🌐 हिंदी ताजा खबरें 🗞️",
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 25,
-            fontWeight: FontWeight.w400,
-            letterSpacing: 2,
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1,
           ),
         ),
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.redAccent,
         centerTitle: true,
-        elevation: 7,
-        shadowColor: Colors.black,
+        elevation: 4,
+        shadowColor: Colors.black54,
       ),
       body: newsProvider.isLoading
           ? const Center(
@@ -46,10 +48,32 @@ class _ReadArticalScreenState extends State<ReadArticalScreen> {
           color: Colors.redAccent,
         ),
       )
+          : newsProvider.articles.isEmpty
+          ? const Center(
+        child: Text(
+          "कोई खबर उपलब्ध नहीं है ❌",
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.black54,
+          ),
+        ),
+      )
           : ListView.builder(
+        padding: const EdgeInsets.all(12),
         itemCount: newsProvider.articles.length,
         itemBuilder: (context, index) {
-          return ArticleTile(article: newsProvider.articles[index]);
+          final article = newsProvider.articles[index];
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: ArticleTile(article: article),
+            ),
+          );
         },
       ),
     );

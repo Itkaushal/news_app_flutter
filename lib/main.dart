@@ -42,77 +42,121 @@ class MyApp extends StatelessWidget {
 }
 
 
-class MainScreen extends StatelessWidget{
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
-  Widget build(BuildContext context) {
-
-    // TODO: implement build
-    return Scaffold(
-        body: Container(
-                alignment: Alignment.topCenter,
-                child: HomeScreen(),
-        ),
-
-        bottomNavigationBar: BottomAppBar(
-            shape: const CircularNotchedRectangle(
-            ),
-            notchMargin: 9,
-            surfaceTintColor: Colors.black,
-            elevation: 5,
-            clipBehavior: Clip.antiAlias,
-            padding: EdgeInsets.all(5.0),
-            height: 60,
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  IconButton(icon: const Icon(Icons.home,color: Colors.red,), onPressed: () {
-                    //Navigator.push(context, MaterialPageRoute(builder: (_) => MainScreen()));
-                  }),
-                  IconButton(icon: const Icon(Icons.search,color: Colors.red,), onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => SearchScreen()));
-                  }),
-                  const SizedBox(width: 40), // FAB ke liye space
-                  IconButton(icon: const Icon(Icons.notifications,color: Colors.red,), onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => NotificationScreen()),
-                    );
-                  }),
-                  IconButton(icon: const Icon(Icons.person,color: Colors.red,), onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen()));
-                  }),
-                ],
-              ),
-            ),
-          ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => ReadArticalScreen()));
-          },
-          elevation: 5,
-          splashColor: Colors.red,
-          backgroundColor: Colors.white12,
-          enableFeedback: true,
-          heroTag: "fab",
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100.0)),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-            child: Center(
-              child: const Icon(
-                Icons.chrome_reader_mode_outlined,
-                color: Colors.redAccent,size: 30,
-                weight: 10,
-              ),
-            ),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      );
-  }
-
+  State<MainScreen> createState() => _MainScreenState();
 }
 
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const SearchScreen(),
+    const NotificationScreen(),
+    const ProfileScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      extendBody: true,
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        child: _screens[_selectedIndex],
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const ReadArticalScreen()));
+        },
+        backgroundColor: Colors.redAccent,
+        elevation: 6,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        child: const Icon(Icons.chrome_reader_mode_outlined,
+            color: Colors.white, size: 28),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(24), topRight: Radius.circular(24)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 2,
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: BottomAppBar(
+          elevation: 0,
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 10,
+          color: Colors.transparent,
+          child: SizedBox(
+            height: 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(Icons.home, "Home", 0),
+                _buildNavItem(Icons.search, "Search", 1),
+                const SizedBox(width: 40), // space for FAB
+                _buildNavItem(Icons.notifications, "Alerts", 2),
+                _buildNavItem(Icons.person, "Profile", 3),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, String label, int index) {
+    final isSelected = _selectedIndex == index;
+    return GestureDetector(
+      onTap: () => _onItemTapped(index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: isSelected
+            ? BoxDecoration(
+          color: Colors.redAccent.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(16),
+        )
+            : null,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon,
+                color: isSelected ? Colors.redAccent : Colors.grey, size: 25),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight:
+                isSelected ? FontWeight.w600 : FontWeight.normal,
+                color: isSelected ? Colors.redAccent : Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 
 Future<void> requestNotificationPermission() async {

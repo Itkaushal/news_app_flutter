@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../providers/news_provider.dart';
 import '../widgets/article_tile.dart';
@@ -13,12 +13,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<String> categories = ["general", "business", "sports", "technology", "entertainment"];
+  final List<String> categories = [
+    "general",
+    "business",
+    "sports",
+    "technology",
+    "entertainment"
+  ];
+  String selectedCategory = "general";
 
   @override
   void initState() {
     super.initState();
-    Provider.of<NewsProvider>(context, listen: false).fetchNews();
+    Provider.of<NewsProvider>(context, listen: false).fetchNews(category: selectedCategory);
   }
 
   @override
@@ -26,82 +33,78 @@ class _HomeScreenState extends State<HomeScreen> {
     final newsProvider = Provider.of<NewsProvider>(context);
 
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        title: const Text("Flutter News App",
-          style: TextStyle(color: Colors.black,
-              fontSize: 25,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 2),
+        title: const Text(
+          "📰 News Today",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        backgroundColor: Colors.red,
         centerTitle: true,
-        elevation: 7,
-        shadowColor: Colors.black,
-        actions: [
-          /*IconButton(
-            icon: const Icon(Icons.search,color: Colors.black),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen()));
-            },
-          ),*/
-
-        ],
+        elevation: 0,
+        backgroundColor: Colors.red,
       ),
       body: Column(
         children: [
+          // 🔥 Category Chips
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: double.infinity,
-              height: 60,
+            padding: const EdgeInsets.all(2.0),
+            child: Container(
+              height: 48,
+              margin: const EdgeInsets.symmetric(vertical: 8),
               child: ListView.builder(
-                shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
                   final cat = categories[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: ActionChip(
-                      label: Text(cat),
-                      backgroundColor: Colors.white30,
-                      labelStyle: const TextStyle(color: Colors.red,fontSize: 18),
-                      labelPadding: const EdgeInsets.symmetric(horizontal: 10),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-                      elevation: 5,
-                      shadowColor: Colors.black54,
-                      visualDensity: VisualDensity.adaptivePlatformDensity,
-                      surfaceTintColor: Colors.white,
-                      padding: const EdgeInsets.all(12),
-                      pressElevation: 10,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      onPressed: () {
-                        newsProvider.fetchNews(category: cat);
-                      },
+                  final isSelected = selectedCategory == cat;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedCategory = cat;
+                      });
+                      newsProvider.fetchNews(category: cat);
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.red : Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3),
+                          )
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          cat[0].toUpperCase() + cat.substring(1),
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.red,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
                     ),
                   );
                 },
               ),
             ),
           ),
+
+          // 🔥 News Articles
           Expanded(
             child: newsProvider.isLoading
-                ? const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(100.0),
-                    child: LinearProgressIndicator(
-                      semanticsLabel: "fetch",
-                      stopIndicatorColor: Colors.white10,
-                      trackGap: 0.2,
-                      backgroundColor: Colors.black12,
-                      stopIndicatorRadius: 10,
-                      minHeight: 15,
-                      borderRadius: BorderRadius.all(Radius.circular(100)),
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent),
-                    ),
-                  ),
-                )
+                ? _buildShimmerLoader()
                 : ListView.builder(
+              padding: const EdgeInsets.all(12),
               itemCount: newsProvider.articles.length,
               itemBuilder: (context, index) {
                 return ArticleTile(article: newsProvider.articles[index]);
@@ -110,6 +113,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  /// 🔥 Shimmer effect while loading
+  Widget _buildShimmerLoader() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: 6,
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            height: 120,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        );
+      },
     );
   }
 }
